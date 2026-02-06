@@ -20,6 +20,7 @@ export const getHoot = async (req, res) => {
 
 export const createHoot = async (req, res) => {
   try {
+    req.body.author = req.user._id;
     const newHoot = await Hoot.create(req.body);
     res.json(newHoot);
   } catch (error) {
@@ -39,6 +40,35 @@ export const updateHoot = async (req, res) => {
   }
 };
 
-export const deleteHoot = async () => {};
+export const deleteHoot = async (req, res) => {
+  try {
+    const { hootId } = req.params;
 
-export const addComment = async () => {};
+    const deleted = await Hoot.findByIdAndDelete(hootId);
+
+    if (!deleted) {
+      res.status(404);
+      throw new Error("Hoot not found.");
+    }
+
+    res.status(200).json(deleted);
+  } catch (error) {
+    if (res.statusCode === 404) {
+      res.json({ err: err.message });
+    } else {
+      res.status(500).json({ err: err.message });
+    }
+  }
+};
+
+export const addComment = async (req, res) => {
+  try {
+    const hoot = await Hoot.findById(req.params.hootId);
+    req.body.author = req.user._id
+    hoot.comments.push(req.body);
+    await hoot.save();
+    res.json(hoot);
+  } catch (error) {
+    console.log(error);
+  }
+};
