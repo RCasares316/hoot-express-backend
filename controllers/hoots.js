@@ -20,6 +20,7 @@ export const getHoot = async (req, res) => {
 
 export const createHoot = async (req, res) => {
   try {
+    req.body.author = req.user._id;
     const newHoot = await Hoot.create(req.body);
     res.json(newHoot);
   } catch (error) {
@@ -60,4 +61,14 @@ export const deleteHoot = async (req, res) => {
   }
 };
 
-export const addComment = async (req, res) => {};
+export const addComment = async (req, res) => {
+  try {
+    const hoot = await Hoot.findById(req.params.hootId);
+    req.body.author = req.user._id
+    hoot.comments.push(req.body);
+    await hoot.save();
+    res.json(hoot);
+  } catch (error) {
+    console.log(error);
+  }
+};
