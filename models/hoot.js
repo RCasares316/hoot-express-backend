@@ -11,24 +11,29 @@ const commentSchema = new mongoose.Schema({
   },
 });
 
-const hootSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
+const hootSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    text: {
+      type: String,
+      required: true,
+    },
+    category: {
+      type: String,
+      required: true,
+    },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    comments: [commentSchema],
   },
-  text: {
-    type: String,
-    required: true,
+  {
+    timestamps: true,
   },
-  category: {
-    type: String,
-    required: true,
-  },
-  author: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
-  comments: [commentSchema],
-});
+);
 
 export default mongoose.model("Hoot", hootSchema);

@@ -2,7 +2,7 @@ import Hoot from "../models/hoot.js";
 
 export const getHoots = async (req, res) => {
   try {
-    const hootsData = await Hoot.find({});
+    const hootsData = await Hoot.find({}).populate("author");
     res.json(hootsData);
   } catch (error) {
     console.log(error);
@@ -11,7 +11,7 @@ export const getHoots = async (req, res) => {
 
 export const getHoot = async (req, res) => {
   try {
-    const hootData = await Hoot.findById(req.params.hootId);
+    const hootData = await Hoot.findById(req.params.hootId).populate("author comments.author");
     res.json(hootData);
   } catch (error) {
     console.log(error);
@@ -64,7 +64,7 @@ export const deleteHoot = async (req, res) => {
 export const addComment = async (req, res) => {
   try {
     const hoot = await Hoot.findById(req.params.hootId);
-    req.body.author = req.user._id
+    req.body.author = req.user._id;
     hoot.comments.push(req.body);
     await hoot.save();
     res.json(hoot);
